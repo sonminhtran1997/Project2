@@ -23,6 +23,8 @@ public class Jumble extends JFrame{
     JComboBox[] comboArray = new JComboBox[MAX_CHAR];
     File dictFile = null;
     JFileChooser chooser;
+    String dictionaryName = "";
+    Dictionary dictionary;
     public static void main(String[] args) {
         JFrame frame = new Jumble();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,19 +58,26 @@ public class Jumble extends JFrame{
     }
     public void setNorthPanel(){
         northPanel = new JPanel();
+        northPanel.setLayout(new FlowLayout());
         northPanel.setBackground(Color.LIGHT_GRAY);
-        statusLabel = new JLabel("");
+        statusLabel = new JLabel("Dictionary: None");
         northPanel.add(statusLabel);
         numberSolutionsLabel = new JLabel("");
-        northPanel.setLayout(new FlowLayout());
-        
+        northPanel.add(numberSolutionsLabel);
     }
     public void setCenterPanel(){
         centerPanel = new JPanel();
         centerPanel.setLayout(new BorderLayout());
         wordPanel = new JPanel();
+        Color wordPanelColor = new Color(0,255 ,153);
+        wordPanel.setBackground(wordPanelColor);
+        wordLabel = new JLabel();
+        wordLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        wordLabel.setForeground(Color.BLUE);
+        wordPanel.add(wordLabel);
         answerPanel = new JPanel();
         answerPanel.setBackground(Color.CYAN);
+        centerPanel.add(wordPanel, BorderLayout.NORTH);
         centerPanel.add(answerPanel, BorderLayout.SOUTH);
         comboPanel = new JPanel();
         for (int i = 0; i < MAX_CHAR; i++) 
@@ -77,7 +86,7 @@ public class Jumble extends JFrame{
             comboPanel.add(comboArray[i]);
             comboArray[i].setVisible(false);
         }
-        centerPanel.add(comboPanel);
+        centerPanel.add(comboPanel, BorderLayout.CENTER);
     }
     public void setSouthPanel(){
         southPanel = new JPanel();
@@ -85,6 +94,11 @@ public class Jumble extends JFrame{
         southPanel.setBackground(Color.lightGray);
         getButton = new JButton("get Jumble");
         getButton.setEnabled(false);
+        getButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getButtonActionPerformed(evt);
+            }
+        });
         testButton = new JButton("test answer");
         testButton.setEnabled(false);
         seeButton = new JButton("see answer");
@@ -95,22 +109,67 @@ public class Jumble extends JFrame{
     }
     private void loadJMenuItemActionPerformed(java.awt.event.ActionEvent evt){
         boolean dictionaryLoaded = true;
+        String[] extensionRequired = new String[]{"Dic", "DIC", "dic"};
+        ExtensionFileFilter filter = new ExtensionFileFilter("dic", extensionRequired);
         chooser = new JFileChooser();
         String dictionaryName = "";
         dictFile = new File(dictionaryName);
-        String[] extensionRequired = new String[]{"Dic", "DIC", "dic"};
         chooser.setCurrentDirectory(dictFile.getAbsoluteFile().getParentFile());
+        chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(null);
         if (returnVal == JFileChooser.APPROVE_OPTION) 
         {
             dictFile = chooser.getSelectedFile();
             dictionaryName = dictFile.getName().trim();
         }
-//        FileFilter filter = new ExtensionFileFilter("dic", extensionRequired);
-        
-        
+        try{
+            if (dictFile.exists() && dictFile.canRead()) 
+            {
+                dictionary = new Dictionary(dictFile);
+                if (dictionary.checkStatusSetup()) {
+                    dictionaryLoaded = true;
+                    dictionaryName = dictFile.getName().trim();
+                }
+                else
+                {
+                    dictFile = null;
+                    dictionaryLoaded = false;
+                    dictionaryName = "None";
+                }
+            }
+            else
+            {
+                dictFile = null;
+                dictionaryLoaded = false;
+                dictionaryName = "None";
+            }
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null, "Error", "Cannot load Dictionary", JOptionPane.ERROR_MESSAGE);
+        }
+        if (dictionaryLoaded)
+        {
+            statusLabel.setText("Dictionary: " + dictionaryName);
+            getButton.setEnabled(true);
+            testButton.setEnabled(true);
+            seeButton.setEnabled(true);
+        }
+        else
+            statusLabel.setText("Dictionary: None");
     }
-
+    private void getButtonActionPerformed(java.awt.event.ActionEvent evt){
+        String jumble = "";
+        jumble = dictionary.getJumble();
+        wordLabel.setText(jumble);
+        for (int i = 0; i < jumble.length(); i++) {
+            comboArray[i].setVisible(true);
+            comboArray[i].addItem("");
+            for (int j = 0; j < jumble.length(); j++) {
+                comboArray[i].addItem(jumble.toCharArray()[j]);
+            }
+        }
+    }
     JMenuBar menuJMenuBar;
     JMenu fileJMenu;
     JMenuItem loadJMenuItem;
@@ -124,5 +183,6 @@ public class Jumble extends JFrame{
     JPanel centerPanel;
     JPanel comboPanel;
     JPanel wordPanel;
+    JLabel wordLabel;
     JPanel answerPanel;
 }
