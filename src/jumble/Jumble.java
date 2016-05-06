@@ -25,6 +25,7 @@ public class Jumble extends JFrame{
     JFileChooser chooser;
     String dictionaryName = "";
     Dictionary dictionary;
+    JumbleSolver solver;
     public static void main(String[] args) {
         JFrame frame = new Jumble();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -162,12 +163,22 @@ public class Jumble extends JFrame{
         String jumble = "";
         jumble = dictionary.getJumble();
         wordLabel.setText(jumble);
+        solver = new JumbleSolver(jumble, dictionary);
+        for (int i = 0; i < MAX_CHAR; i++) 
+        {
+            comboArray[i].setVisible(false);
+        }
         for (int i = 0; i < jumble.length(); i++) {
             comboArray[i].setVisible(true);
+            comboArray[i].removeAllItems();
             comboArray[i].addItem("");
             for (int j = 0; j < jumble.length(); j++) {
                 comboArray[i].addItem(jumble.toCharArray()[j]);
             }
+        }
+        numberSolutionsLabel.setText("Number of solutions: " + solver.getSolutions().length);
+        for (int i = 0; i < solver.getSolutions().length; i++) {
+            System.out.println(solver.getSolutions()[i]);
         }
     }
     JMenuBar menuJMenuBar;

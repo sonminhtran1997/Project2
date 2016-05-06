@@ -14,6 +14,7 @@ public class Dictionary {
     File dictFile = null;
     Scanner fileScanner;
     String current;
+    String scrambleWord = "";
     int length = 0;
     ArrayList<String> wordList;
     String[] wordArray;
@@ -64,7 +65,6 @@ public class Dictionary {
         int randTimes = 0;
         randNum = rand.nextInt(wordArray.length);
         randTimes =  rand.nextInt(RAND_TIMES_MAX);
-        String scrambleWord = "";
         scrambleWord = wordArray[randNum];
         jumbleWord = scramble(scrambleWord, randTimes);
         return jumbleWord;
