@@ -20,7 +20,7 @@ public class Dictionary {
     String[] wordArray;
     Random rand = new Random();
     
-    final int RAND_TIMES_MAX = 25;
+    final int RAND_TIMES_MAX = 24;
     public Dictionary()
     {
         wordList = new ArrayList();
@@ -64,7 +64,7 @@ public class Dictionary {
         int randNum = 0;
         int randTimes = 0;
         randNum = rand.nextInt(wordArray.length);
-        randTimes =  rand.nextInt(RAND_TIMES_MAX);
+        randTimes =  rand.nextInt(RAND_TIMES_MAX) + 1;
         scrambleWord = wordArray[randNum];
         jumbleWord = scramble(scrambleWord, randTimes);
         return jumbleWord;
@@ -95,6 +95,4 @@ public class Dictionary {
         }
         return outputString.toString();
     }
-    
-    
 }

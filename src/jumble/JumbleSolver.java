@@ -25,7 +25,7 @@ public class JumbleSolver {
         permutation = permutationTool.getPermutation().toArray(permutation);
         for (int i = 0; i < permutation.length; i++) {
             if (binSearch(dictionary.wordArray, permutation[i], 0, dictionary.wordArray.length - 1) 
-                    && !solutions.contains(permutation[i])) 
+                    && (!solutions.contains(permutation[i]))) 
             {
                 solutions.add(permutation[i]);
             }
@@ -36,7 +36,7 @@ public class JumbleSolver {
     }
     public boolean binSearch(String[] data, String word, int fromIndex, int toIndex){
         int mid = 0;
-        if (fromIndex >= toIndex) 
+        if (fromIndex > toIndex) 
         {
             return false;
         }
